@@ -4,90 +4,19 @@
     <title>Edit Book</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <style>
-        body{
-            font-family: Arial, sans-serif;
-            background:#f4f6f9;
-            margin:0;
-        }
-
-        .navbar{
-            background:#222;
-            color:white;
-            padding:15px 30px;
-            font-size:18px;
-        }
-
-        .container{
-            width:80%;
-            margin:30px auto;
-        }
-
-        .card{
-            background:white;
-            padding:20px;
-            border-radius:8px;
-            box-shadow:0 0 10px rgba(0,0,0,0.1);
-        }
-
-        label{
-            display:block;
-            margin-top:15px;
-            margin-bottom:5px;
-            font-weight:bold;
-        }
-
-        input, select{
-            width:100%;
-            padding:8px;
-            border:1px solid #ccc;
-            border-radius:5px;
-        }
-
-        .btn{
-            padding:10px 15px;
-            border:none;
-            border-radius:5px;
-            cursor:pointer;
-            margin-top:15px;
-            text-decoration:none;
-            display:inline-block;
-        }
-
-        .btn-primary{
-            background:#0d6efd;
-            color:white;
-        }
-
-        .btn-secondary{
-            background:gray;
-            color:white;
-        }
-
-        .alert{
-            background:#ffdddd;
-            color:#a00;
-            padding:10px;
-            border-radius:5px;
-            margin-bottom:15px;
-        }
-    </style>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-
 <body>
 
-<div class="navbar">
-    CRUD Book Laravel
-</div>
+@include('partials.navbar')
 
-<div class="container">
+<div class="container mt-4">
 
 <h3>Edit Book</h3>
 
 @if ($errors->any())
-<div class="alert">
-    <ul>
+<div class="alert alert-danger">
+    <ul class="mb-0">
         @foreach ($errors->all() as $error)
             <li>{{ $error }}</li>
         @endforeach
@@ -96,36 +25,73 @@
 @endif
 
 <div class="card">
+<div class="card-body">
 
-<form action="{{ route('books.update',$book->id) }}" method="POST">
+<form action="{{ route('books.update',$book->id) }}" method="POST" enctype="multipart/form-data">
     @csrf
     @method('PUT')
 
-    <label>Kategori</label>
-    <select name="category_id">
-        @foreach($categories as $category)
-            <option value="{{ $category->id }}"
-                {{ $category->id == $book->category_id ? 'selected' : '' }}>
-                {{ $category->nama_kategori }}
-            </option>
-        @endforeach
-    </select>
+    <div class="mb-3">
+        <label class="form-label">Kategori</label>
+        <select name="category_id" class="form-select" required>
+            @foreach($categories as $category)
+                <option value="{{ $category->id }}"
+                    {{ $category->id == $book->category_id ? 'selected' : '' }}>
+                    {{ $category->nama_kategori }}
+                </option>
+            @endforeach
+        </select>
+    </div>
 
-    <label>Judul</label>
-    <input type="text" name="judul" value="{{ $book->judul }}">
+    <div class="mb-3">
+        <label class="form-label">Judul</label>
+        <input type="text" name="judul" class="form-control" value="{{ $book->judul }}" required>
+    </div>
 
-    <label>Penulis</label>
-    <input type="text" name="penulis" value="{{ $book->penulis }}">
+    <div class="mb-3">
+        <label class="form-label">Penulis</label>
+        <input type="text" name="penulis" class="form-control" value="{{ $book->penulis }}" required>
+    </div>
 
-    <label>Tahun Terbit</label>
-    <input type="number" name="tahun_terbit" value="{{ $book->tahun_terbit }}">
+    <div class="mb-3">
+        <label class="form-label">Tahun Terbit</label>
+        <input type="number" name="tahun_terbit" class="form-control" value="{{ $book->tahun_terbit }}" required>
+    </div>
 
-    <label>Stok</label>
-    <input type="number" name="stok" value="{{ $book->stok }}">
+    <div class="mb-3">
+        <label class="form-label">Stok</label>
+        <input type="number" name="stok" class="form-control" value="{{ $book->stok }}" required>
+    </div>
 
-    <br>
+    <div class="mb-3">
+        <label class="form-label">Pengarang</label>
+        <input type="text" name="pengarang" class="form-control" value="{{ $book->pengarang }}" placeholder="Nama Pengarang">
+    </div>
 
-    <button class="btn btn-primary">Update</button>
+    <div class="mb-3">
+        <label class="form-label">Penerbit</label>
+        <input type="text" name="penerbit" class="form-control" value="{{ $book->penerbit }}" placeholder="Nama Penerbit">
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Sinopsis</label>
+        <textarea name="sinopsis" class="form-control" rows="4" placeholder="Sinopsis buku">{{ $book->sinopsis }}</textarea>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Cover Buku</label>
+        <input type="file" name="cover_image" class="form-control" accept="image/*">
+        <small class="text-muted">Format: JPG, PNG, GIF. Max: 2MB. Biarkan kosong jika tidak ingin mengubah.</small>
+        @if($book->cover_image)
+            <div class="mt-2">
+                <img src="{{ asset('storage/' . $book->cover_image) }}" class="img-thumbnail" style="width: 100px;" alt="Current Cover">
+                <p class="mt-1">Cover saat ini</p>
+            </div>
+        @endif
+    </div>
+
+    <button class="btn btn-success">Update</button>
+    <a href="{{ route('home') }}" class="btn btn-info">Home</a>
     <a href="{{ route('books.index') }}" class="btn btn-secondary">Kembali</a>
 
 </form>
@@ -133,5 +99,8 @@
 </div>
 </div>
 
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

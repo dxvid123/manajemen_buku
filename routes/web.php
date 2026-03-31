@@ -2,22 +2,17 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BookController;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-*/
+Route::get('/', [AuthController::class, 'showLogin'])->name('login')->middleware('guest');
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::get('/register', [AuthController::class, 'showRegister'])->name('register')->middleware('guest');
+Route::post('/register', [AuthController::class, 'register']);
 
-// Redirect halaman awal ke books
-Route::get('/', function () {
-    return redirect()->route('books.index');
+Route::middleware('auth')->group(function () {
+    Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+    Route::resource('books', BookController::class);
+    Route::resource('categories', CategoryController::class);
 });
-
-// CRUD BOOK
-Route::resource('books', BookController::class);
-
-// ✅ CRUD CATEGORY (TAMBAHAN)
-Route::resource('categories', CategoryController::class);
-

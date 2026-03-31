@@ -9,6 +9,15 @@ use Illuminate\Http\Request;
 class BookController extends Controller
 {
     /**
+     * Display home page with book covers.
+     */
+    public function home()
+    {
+        $books = Book::with('category')->get();
+        return view('home', compact('books'));
+    }
+
+    /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
@@ -61,10 +70,22 @@ class BookController extends Controller
             'judul'         => 'required',
             'penulis'       => 'required',
             'tahun_terbit'  => 'required|numeric',
-            'stok'          => 'required|numeric'
+            'stok'          => 'required|numeric',
+            'cover_image'   => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'sinopsis'      => 'nullable|string',
+            'penerbit'      => 'nullable|string',
+            'pengarang'     => 'nullable|string'
         ]);
 
-        Book::create($request->all());
+        $data = $request->all();
+
+        if ($request->hasFile('cover_image')) {
+            $imageName = time() . '.' . $request->cover_image->extension();
+            $request->cover_image->move(public_path('storage/covers'), $imageName);
+            $data['cover_image'] = 'covers/' . $imageName;
+        }
+
+        Book::create($data);
 
         return redirect()->route('books.index')
                 ->with('success', 'Data berhasil ditambahkan');
@@ -100,11 +121,28 @@ class BookController extends Controller
             'judul'         => 'required',
             'penulis'       => 'required',
             'tahun_terbit'  => 'required|numeric',
-            'stok'          => 'required|numeric'
+            'stok'          => 'required|numeric',
+            'cover_image'   => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'sinopsis'      => 'nullable|string',
+            'penerbit'      => 'nullable|string',
+            'pengarang'     => 'nullable|string'
         ]);
 
         $book = Book::findOrFail($id);
-        $book->update($request->all());
+        $data = $request->all();
+
+        if ($request->hasFile('cover_image')) {
+            // Hapus gambar lama jika ada
+            if ($book->cover_image && file_exists(public_path('storage/' . $book->cover_image))) {
+                unlink(public_path('storage/' . $book->cover_image));
+            }
+
+            $imageName = time() . '.' . $request->cover_image->extension();
+            $request->cover_image->move(public_path('storage/covers'), $imageName);
+            $data['cover_image'] = 'covers/' . $imageName;
+        }
+
+        $book->update($data);
 
         return redirect()->route('books.index')
                 ->with('success', 'Data berhasil diupdate');

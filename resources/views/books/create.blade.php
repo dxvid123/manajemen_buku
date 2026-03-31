@@ -6,36 +6,13 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-```
 <!-- Bootstrap 5 CDN -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-```
 
 </head>
 <body>
 
-<!-- NAVBAR -->
-
-<nav class="navbar navbar-dark bg-dark">
-    <div class="container">
-        <span class="navbar-brand">CRUD Book Laravel</span>
-
-```
-    <div>
-        <a href="{{ route('books.index') }}"
-           class="btn btn-outline-light btn-sm">
-           Book
-        </a>
-
-        <a href="{{ route('categories.index') }}"
-           class="btn btn-outline-light btn-sm">
-           Category
-        </a>
-    </div>
-</div>
-```
-
-</nav>
+@include('partials.navbar')
 
 <div class="container mt-4">
 
@@ -55,7 +32,7 @@
 <div class="card">
 <div class="card-body">
 
-<form action="{{ route('books.store') }}" method="POST">
+<form action="{{ route('books.store') }}" method="POST" enctype="multipart/form-data">
 @csrf
 
 <!-- CATEGORY -->
@@ -63,7 +40,6 @@
 <div class="mb-3">
     <label class="form-label">Kategori</label>
 
-```
 <select name="category_id" class="form-select" required>
     <option value="">-- Pilih Kategori --</option>
 
@@ -81,7 +57,6 @@
     Belum ada kategori?
     <a href="{{ route('categories.create') }}">Tambah kategori</a>
 </small>
-```
 
 </div>
 
@@ -127,6 +102,43 @@
            class="form-control"
            value="{{ old('stok') }}"
            required>
+</div>
+
+<!-- PENGARANG -->
+<div class="mb-3">
+    <label class="form-label">Pengarang</label>
+    <input type="text"
+           name="pengarang"
+           class="form-control"
+           value="{{ old('pengarang') }}"
+           placeholder="Contoh: Nama Lengkap Pengarang">
+</div>
+
+<!-- PENERBIT -->
+<div class="mb-3">
+    <label class="form-label">Penerbit</label>
+    <input type="text"
+           name="penerbit"
+           class="form-control"
+           value="{{ old('penerbit') }}"
+           placeholder="Contoh: Nama Penerbit">
+</div>
+
+<!-- SINOPSIS -->
+<div class="mb-3">
+    <label class="form-label">Sinopsis</label>
+    <textarea name="sinopsis" class="form-control" rows="4" placeholder="Ringkasan cerita buku">{{ old('sinopsis') }}</textarea>
+</div>
+
+<!-- COVER IMAGE -->
+
+<div class="mb-3">
+    <label class="form-label">Cover Buku</label>
+    <input type="file"
+           name="cover_image"
+           class="form-control"
+           accept="image/*">
+    <small class="text-muted">Format: JPG, PNG, GIF. Max: 2MB</small>
 </div>
 
 <button class="btn btn-success">Simpan</button> <a href="{{ route('books.index') }}" class="btn btn-secondary">Kembali</a>

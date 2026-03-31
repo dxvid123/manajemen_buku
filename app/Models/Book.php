@@ -22,7 +22,11 @@ class Book extends Model
         'judul',
         'penulis',
         'tahun_terbit',
-        'stok'
+        'stok',
+        'cover_image',
+        'sinopsis',
+        'penerbit',
+        'pengarang'
     ];
 
     /*
